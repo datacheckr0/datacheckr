@@ -60,6 +60,7 @@ if choice.lower() == 'csv':
     csv_import()
 elif choice.lower() == 'manual':
     print("Enter the emails you want to verify...")
+    print("Verifying All Emails...")
     manual_input()
 
 print("All emails have been checked")

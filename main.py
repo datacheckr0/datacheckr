@@ -29,6 +29,7 @@ def verify(email: str):
         emailData = get_email_data(email)
         result = quality_score(emailData)
         return result
-    except:
+    except ValueError:
         return {"error": "Invalid email format"}
-    
+    except requests.exceptions.RequestException as e:
+        return {"error": "Error contacting email validation API"}  # Handle potential network errors
