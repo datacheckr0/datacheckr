@@ -1,8 +1,11 @@
-from fastapi import FastAPI 
-from pydantic import EmailStr
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 import requests
 import json
+
+class EmailSchema(BaseModel):
+    email: str
 
 app = FastAPI()
 
@@ -19,17 +22,18 @@ def quality_score(emailData):
     e = emailData["email"]
     d = emailData["deliverability"].lower()
     return {"email": e, "deliverability": d, "quality_score": q}
-
-@app.get("/verify_email/{email}")  # {email} will be the user input on the Webflow site
-def verify(email: str):
+    
+@app.post("/verify_email")  
+def verify(email_data: EmailSchema):  # Capture the incoming data as a Pydantic model
     try:
-        # Basic validation using Pydantic's EmailStr type
-        email = EmailStr(email)  # This will raise EmailNotValidError if the format is incorrect
+        email = email_data.email  # Get the email from the incoming data
 
         emailData = get_email_data(email)
         result = quality_score(emailData)
         return result
-    except ValueError:
+    except ValueError as ve:
+        print(ve)
         return {"error": "Invalid email format"}
     except requests.exceptions.RequestException as e:
-        return {"error": "Error contacting email validation API"}  # Handle potential network errors
+        print(e)
+        return {"error": "Error contacting email validation API"}
