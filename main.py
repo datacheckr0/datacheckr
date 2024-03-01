@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware  # import the CORSMiddleware
 from pydantic import BaseModel
 
 import requests
@@ -8,6 +9,15 @@ class EmailSchema(BaseModel):
     email: str
 
 app = FastAPI()
+
+# Add CORS Middleware to allow cross-origin requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://shipswift-v1.webflow.io/"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["https://shipswift-v1.webflow.io/"],  # Allows all methods
+    allow_headers=["https://shipswift-v1.webflow.io/"],  # Allows all headers
+)
 
 API = "39481f9e97d7414ea3d674030f2e5483"
 
@@ -22,11 +32,11 @@ def quality_score(emailData):
     e = emailData["email"]
     d = emailData["deliverability"].lower()
     return {"email": e, "deliverability": d, "quality_score": q}
-    
+
 @app.post("/verify_email")  
-def verify(email_data: EmailSchema):  # Capture the incoming data as a Pydantic model
+def verify(email_data: EmailSchema):  
     try:
-        email = email_data.email  # Get the email from the incoming data
+        email = email_data.email  
 
         emailData = get_email_data(email)
         result = quality_score(emailData)
@@ -36,4 +46,4 @@ def verify(email_data: EmailSchema):  # Capture the incoming data as a Pydantic 
         return {"error": "Invalid email format"}
     except requests.exceptions.RequestException as e:
         print(e)
-        return {"error": "Error contacting email validation API"}
+        return {"error": "Error contacting email validation API"}  
