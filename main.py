@@ -13,10 +13,10 @@ app = FastAPI()
 # Add CORS Middleware to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://shipswift-v1.webflow.io/"],  # Allows all origins
+    allow_origins=["*"],  # Allows all origins
     allow_credentials=True,
-    allow_methods=["https://shipswift-v1.webflow.io/"],  # Allows all methods
-    allow_headers=["https://shipswift-v1.webflow.io/"],  # Allows all headers
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
 API = "39481f9e97d7414ea3d674030f2e5483"
